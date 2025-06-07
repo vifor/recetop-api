@@ -45,6 +45,14 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
 
 > **Note:** Endpoints may require the correct JSON structure for `RecipeDto`.
 
+## Testing with Postman
+
+A Postman collection is included to make testing the API endpoints easy. You can import the collection to your Postman client to get started right away.
+
+1.  Download the collection file located at `postman/recetop-api.postman_collection.json`.
+2.  In Postman, click the "Import" button.
+3.  Upload the downloaded file. A new collection named "recetop-api" will appear in your collections tab.
+
 ## Technologies Used
 
 - Spring Boot
