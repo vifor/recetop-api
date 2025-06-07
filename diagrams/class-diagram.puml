@@ -1,0 +1,41 @@
+@startuml
+interface RecipeRepository {
+  +save()
+  +findById()
+  +findAll()
+  +deleteById()
+}
+
+interface RecipeService {
+  +getNewcomerRecipe()
+  +getRecipeById()
+  +getAllRecipes()
+  +createRecipe()
+  +updateRecipe()
+  +deleteRecipe()
+}
+
+class RecipeServiceImpl {
+  -recipeRepository: RecipeRepository
+  +getNewcomerRecipe()
+  +getRecipeById()
+  +getAllRecipes()
+  +createRecipe()
+  +updateRecipe()
+  +deleteRecipe()
+}
+
+class Recipe {
+  -id: Long
+  -name: String
+  -ingredients: String
+  -instructions: String
+  -prepTime: String
+  -cookTime: String
+}
+
+RecipeRepository <|-- RecipeRepository
+RecipeService <|.. RecipeServiceImpl
+RecipeServiceImpl --> RecipeRepository
+RecipeRepository --> Recipe
+@enduml
