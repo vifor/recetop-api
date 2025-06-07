@@ -22,33 +22,34 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public RecipeDto getNewcomerRecipe() {
-        List<Recipe> allRecipes = recipeRepository.findAll();
-        if (!allRecipes.isEmpty()) {
-            return toDto(allRecipes.get(0));
-        }
-        return null;
+@Transactional(readOnly = true)
+public RecipeDto getNewcomerRecipe() {
+    List<Recipe> allRecipes = recipeRepository.findAll();
+    if (!allRecipes.isEmpty()) {
+        // Simply replace the call to the private method
+        return RecipeDto.fromEntity(allRecipes.get(0));
     }
+    return null;
+}
 
-    @Transactional(readOnly = true)
-    public Optional<RecipeDto> getRecipeById(Long id) {
-        return recipeRepository.findById(id).map(this::toDto);
-    }
+  @Transactional(readOnly = true)
+public Optional<RecipeDto> getRecipeById(Long id) {
+    return recipeRepository.findById(id).map(RecipeDto::fromEntity);
+}
+@Transactional(readOnly = true)
+public List<RecipeDto> getAllRecipes() {
+    return recipeRepository.findAll()
+            .stream()
+            .map(RecipeDto::fromEntity)
+            .collect(Collectors.toList());
+}
 
-    @Transactional(readOnly = true)
-    public List<RecipeDto> getAllRecipes() {
-        return recipeRepository.findAll().stream()
-                .map(this::toDto)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional
-    public RecipeDto createRecipe(RecipeDto recipeDto) {
-        Recipe recipe = toEntity(recipeDto);
-        Recipe saved = recipeRepository.save(recipe);
-        return toDto(saved);
-    }
+  @Transactional
+public RecipeDto createRecipe(RecipeDto recipeDto) {
+    Recipe recipe = RecipeDto.toEntity(recipeDto); // Use the static method from RecipeDto
+    Recipe saved = recipeRepository.save(recipe);
+    return RecipeDto.fromEntity(saved); // Use the static method from RecipeDto
+}
 
     @Transactional
     public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
@@ -61,7 +62,7 @@ public class RecipeServiceImpl implements RecipeService {
         recipe.setCookTime(recipeDto.getCookTime());
         // etc. for other fields
         Recipe updated = recipeRepository.save(recipe);
-        return toDto(updated);
+        return RecipeDto.fromEntity(updated);
     }
 
     @Transactional
@@ -70,30 +71,5 @@ public class RecipeServiceImpl implements RecipeService {
             throw new RuntimeException("Recipe not found with id: " + id);
         }
         recipeRepository.deleteById(id);
-    }
-
-    // --- Mapping methods ---
-    private RecipeDto toDto(Recipe recipe) {
-        RecipeDto dto = new RecipeDto();
-        dto.setId(recipe.getId().toString());
-        dto.setName(recipe.getName());
-        dto.setIngredients(recipe.getIngredients());
-        // dto.setInstructions(recipe.getInstructions());
-        dto.setPrepTime(recipe.getPrepTime());
-        dto.setCookTime(recipe.getCookTime());
-        // etc. for other fields
-        return dto;
-    }
-
-    private Recipe toEntity(RecipeDto dto) {
-        Recipe recipe = new Recipe();
-        recipe.setId(Long.parseLong(dto.getId()));
-        recipe.setName(dto.getName());
-        recipe.setIngredients(dto.getIngredients());
-        // recipe.setInstructions(dto.getInstructions());
-        recipe.setPrepTime(dto.getPrepTime());
-        recipe.setCookTime(dto.getCookTime());
-        // etc. for other fields
-        return recipe;
     }
 }

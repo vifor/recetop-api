@@ -6,6 +6,7 @@ import com.recetop.api.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,4 +45,10 @@ public class RecipeController {
     //     // Logic to fetch all recipes
     //     return Arrays.asList(); // Placeholder
     // }
+
+    @PostMapping
+    public RecipeDto createRecipe(RecipeDto recipeDto) {
+        // Logic to create a new recipe
+        return recipeService.createRecipe(recipeDto);
+    }
 }
