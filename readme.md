@@ -49,9 +49,9 @@ For development and testing purposes, the following hardcoded token can be used:
 | GET         | `/recipes/newcomer`     | Get the first (newcomer) recipe    | -                 | `RecipeDto`      |
 | GET         | `/recipes/{id}`         | Get a recipe by ID                 | -                 | `RecipeDto`      |
 | GET         | `/recipes`              | Get all recipes                    | -                 | `List<RecipeDto>`|
-| POST  🔒    | `/recipes`        | Create a new recipe (Authentication Required) | `RecipeDto`         | `RecipeDto`      |
-| PATCH         | `/recipes/{id}`         |Partially update a recipe. Only include the fields you want to change. | `Partial<RecipeDto>`       | `RecipeDto`      |
-| DELETE      | `/recipes/{id}`         | Delete a recipe by ID              | -                 | -                |
+| POST   🔒    | `/recipes`        | Create a new recipe | `RecipeDto`         | `RecipeDto`      |
+| PATCH  🔒       | `/recipes/{id}`         |Partially update a recipe. Only include the fields you want to change. | `Partial<RecipeDto>`       | `RecipeDto`      |
+| DELETE 🔒      | `/recipes/{id}`         | Delete a recipe by ID              | -                 | -                |
 
 > **Note:** Endpoints may require the correct JSON structure for `RecipeDto`.
 
@@ -69,6 +69,27 @@ A Postman collection is included to make testing the API endpoints easy. You can
 - Spring Data JPA
 - H2 Database
 - Springdoc OpenAPI
+
+## Architectural Decisions
+
+This section outlines some of the key design choices made in this project.
+
+### Authentication Strategy: Stateless JWT vs. Stateful Sessions
+
+A stateless authentication mechanism using JSON Web Tokens (JWT) was chosen over traditional stateful sessions for several key reasons:
+
+* **Scalability:** Stateless tokens do not require the server to store session information. This makes it much easier to scale the application horizontally by adding more server instances without worrying about session replication or sticky sessions.
+* **Decoupling:** The token is self-contained. This makes it ideal for modern, decoupled architectures where multiple clients (e.g., a web frontend, a mobile app) might consume the API.
+* **Industry Standard:** JWT Bearer authentication is the de-facto standard for securing modern RESTful APIs.
+
+### Key Implementation Components
+
+The security is implemented using the following core Spring and project components:
+
+* **`pom.xml`:** Includes the `spring-boot-starter-security` and `jjwt` dependencies to bring in the necessary libraries.
+* **`SecurityConfig.java`:** The central configuration class where the Spring Security filter chain is defined. It disables CSRF, sets the session management policy to `STATELESS`, and defines which endpoints are protected.
+* **`JwtAuthenticationFilter.java`:** A custom filter that runs on every request. It is responsible for inspecting the `Authorization` header, validating the JWT, and setting the user's authentication context within Spring Security.
+* **`springdoc-openapi` Annotations:** The `@SecurityScheme` and `@SecurityRequirement` annotations are used in the main application class (`ApiApplication.java`) and controllers (`RecipeController.java`) to accurately document the security requirements in the Swagger UI.
 
 ## License
 

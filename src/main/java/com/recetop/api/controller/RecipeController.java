@@ -59,12 +59,14 @@ public class RecipeController {
     }
 
     @PatchMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
         
         return recipeService.updateRecipe(id, recipeDto);
     }
 
     @DeleteMapping("/{id}") 
+    @SecurityRequirement(name = "bearerAuth")
     public void deleteRecipe(@PathVariable Long id) {
         
         recipeService.deleteRecipe(id);

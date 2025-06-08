@@ -30,9 +30,11 @@ public class SecurityConfig {
 
             // 2. Update the authorization rules
             .authorizeHttpRequests(authorize -> authorize
-                // Rule 1: Any POST request to /recipes MUST be authenticated.
-                .requestMatchers(HttpMethod.POST, "/recipes").authenticated()
-                // Rule 2: Any other request to any other endpoint is permitted.
+       // Secure POST, PATCH, and DELETE methods for /recipes
+            .requestMatchers(HttpMethod.POST, "/recipes").authenticated()
+            .requestMatchers(HttpMethod.PATCH, "/recipes/{id}").authenticated()
+            .requestMatchers(HttpMethod.DELETE, "/recipes/{id}").authenticated()
+            // Rule 2: Any other request to any other endpoint is permitted.
                 .anyRequest().permitAll()
             )
 
