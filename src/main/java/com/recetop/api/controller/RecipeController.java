@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/recipes") // Base path for all recipe-related endpoints
 public class RecipeController {
+        private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
     private final RecipeService recipeService;
 
 
@@ -49,8 +52,7 @@ public class RecipeController {
     @PostMapping
     public RecipeDto createRecipe(@RequestBody RecipeDto recipeDto) {
         
-           System.out.println("---- DEBUG: Received Recipe Name: '" + recipeDto.getName() + "' ----");
-
+      logger.debug("Received request to create recipe with name: '{}'", recipeDto.getName());
         return recipeService.createRecipe(recipeDto);
     }
 
