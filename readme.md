@@ -40,10 +40,18 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
 | GET         | `/recipes/{id}`         | Get a recipe by ID                 | -                 | `RecipeDto`      |
 | GET         | `/recipes`              | Get all recipes                    | -                 | `List<RecipeDto>`|
 | POST        | `/recipes`              | Create a new recipe                | `RecipeDto`       | `RecipeDto`      |
-| PUT         | `/recipes/{id}`         | Update a recipe by ID              | `RecipeDto`       | `RecipeDto`      |
+| PATCH         | `/recipes/{id}`         |Partially update a recipe. Only include the fields you want to change. | `Partial<RecipeDto>`       | `RecipeDto`      |
 | DELETE      | `/recipes/{id}`         | Delete a recipe by ID              | -                 | -                |
 
 > **Note:** Endpoints may require the correct JSON structure for `RecipeDto`.
+
+## Testing with Postman
+
+A Postman collection is included to make testing the API endpoints easy. You can import the collection to your Postman client to get started right away.
+
+1.  Download the collection file located at `postman/recetop-api.postman_collection.json`.
+2.  In Postman, click the "Import" button.
+3.  Upload the downloaded file. A new collection named "recetop-api" will appear in your collections tab.
 
 ## Technologies Used
 

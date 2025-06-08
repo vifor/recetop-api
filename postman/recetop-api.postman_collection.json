@@ -1,0 +1,83 @@
+{
+	"info": {
+		"_postman_id": "62b899c0-f469-4e51-b417-2014ab9da812",
+		"name": "recetop-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17296288"
+	},
+	"item": [
+		{
+			"name": "create recipe",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Tarta de Pollo y Champiñones\",\r\n    \"image\": \"https://url-to-your-image.com/tarta-de-pollo.jpg\",\r\n    \"categories\": [\r\n        \"Plato Principal\",\r\n        \"Tartas\"\r\n    ],\r\n    \"ingredients\": [\r\n        \"1 tapa de pascualina\",\r\n        \"300g de pechuga de pollo\",\r\n        \"200g de champiñones\",\r\n        \"1 cebolla\",\r\n        \"200cc de crema de leche\",\r\n        \"Sal y pimienta a gusto\"\r\n    ],\r\n    \"steps\": [\r\n        \"Saltear la cebolla, el pollo y los champiñones.\",\r\n        \"Mezclar con la crema de leche y condimentar.\",\r\n        \"Colocar el relleno sobre la masa en una tartera.\",\r\n        \"Cocinar en horno medio por 30 minutos o hasta que esté dorada.\"\r\n    ],\r\n    \"prepTime\": \"20 minutos\",\r\n    \"cookTime\": \"30 minutos\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/recipes",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"recipes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "get a recipe",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "newcomer",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "change a recipe",
+			"request": {
+				"method": "PATCH",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "delete recipe",
+			"request": {
+				"method": "DELETE",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
