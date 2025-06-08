@@ -51,19 +51,41 @@ public RecipeDto createRecipe(RecipeDto recipeDto) {
     return RecipeDto.fromEntity(saved); // Use the static method from RecipeDto
 }
 
-    @Transactional
-    public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
-        Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
-        recipe.setName(recipeDto.getName());
-        recipe.setIngredients(recipeDto.getIngredients());
-        // recipe.setInstructions(recipeDto.getInstructions());
-        recipe.setPrepTime(recipeDto.getPrepTime());
-        recipe.setCookTime(recipeDto.getCookTime());
-        // etc. for other fields
-        Recipe updated = recipeRepository.save(recipe);
-        return RecipeDto.fromEntity(updated);
+@Transactional
+public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
+    // Find the existing recipe from the database
+    Recipe recipeToUpdate = recipeRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
+
+    // Check each field from the DTO. If it's not null, update the entity.
+    if (recipeDto.getName() != null) {
+        recipeToUpdate.setName(recipeDto.getName());
     }
+    if (recipeDto.getImage() != null) {
+        recipeToUpdate.setImage(recipeDto.getImage());
+    }
+    if (recipeDto.getPrepTime() != null) {
+        recipeToUpdate.setPrepTime(recipeDto.getPrepTime());
+    }
+    if (recipeDto.getCookTime() != null) {
+        recipeToUpdate.setCookTime(recipeDto.getCookTime());
+    }
+    if (recipeDto.getIngredients() != null && !recipeDto.getIngredients().isEmpty()) {
+        recipeToUpdate.setIngredients(recipeDto.getIngredients());
+    }
+    if (recipeDto.getCategories() != null && !recipeDto.getCategories().isEmpty()) {
+        recipeToUpdate.setCategories(recipeDto.getCategories());
+    }
+    if (recipeDto.getSteps() != null && !recipeDto.getSteps().isEmpty()) {
+        recipeToUpdate.setSteps(recipeDto.getSteps());
+    }
+
+    // Save the updated entity
+    Recipe updatedRecipe = recipeRepository.save(recipeToUpdate);
+
+    // Return the DTO of the newly updated entity
+    return RecipeDto.fromEntity(updatedRecipe);
+}
 
     @Transactional
     public void deleteRecipe(Long id) {

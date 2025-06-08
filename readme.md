@@ -40,7 +40,7 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
 | GET         | `/recipes/{id}`         | Get a recipe by ID                 | -                 | `RecipeDto`      |
 | GET         | `/recipes`              | Get all recipes                    | -                 | `List<RecipeDto>`|
 | POST        | `/recipes`              | Create a new recipe                | `RecipeDto`       | `RecipeDto`      |
-| PUT         | `/recipes/{id}`         | Update a recipe by ID              | `RecipeDto`       | `RecipeDto`      |
+| PATCH         | `/recipes/{id}`         |Partially update a recipe. Only include the fields you want to change. | `Partial<RecipeDto>`       | `RecipeDto`      |
 | DELETE      | `/recipes/{id}`         | Delete a recipe by ID              | -                 | -                |
 
 > **Note:** Endpoints may require the correct JSON structure for `RecipeDto`.
