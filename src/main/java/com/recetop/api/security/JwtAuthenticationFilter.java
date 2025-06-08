@@ -59,6 +59,7 @@ protected void doFilterInternal(
         // --- TOKEN IS PRESENT BUT INVALID ---
         // Reject the request immediately.
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json");
         response.getWriter().write("{\"error\": \"Invalid or Expired Token\"}");
         // IMPORTANT: We do NOT continue the filter chain here.
     }
