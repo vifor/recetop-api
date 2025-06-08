@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import java.util.Arrays;
 import java.util.List;
@@ -50,6 +51,7 @@ public class RecipeController {
         }
 
     @PostMapping
+    @SecurityRequirement(name = "bearerAuth")
     public RecipeDto createRecipe(@RequestBody RecipeDto recipeDto) {
         
       logger.debug("Received request to create recipe with name: '{}'", recipeDto.getName());
@@ -57,12 +59,14 @@ public class RecipeController {
     }
 
     @PatchMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
     public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
         
         return recipeService.updateRecipe(id, recipeDto);
     }
 
     @DeleteMapping("/{id}") 
+    @SecurityRequirement(name = "bearerAuth")
     public void deleteRecipe(@PathVariable Long id) {
         
         recipeService.deleteRecipe(id);
