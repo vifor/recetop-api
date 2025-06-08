@@ -4,7 +4,9 @@ import com.recetop.api.dto.RecipeDto;
 import com.recetop.api.model.Recipe;
 import com.recetop.api.service.RecipeService; 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,15 +22,12 @@ import java.util.Optional;
 public class RecipeController {
     private final RecipeService recipeService;
 
-    // @Autowired // Optional on constructors with a single constructor since Spring 4.3
-   
-   /*Constructor injection example aligns well with the Single Responsibility Principle 
-   and Dependency Inversion Principle (from SOLID */
+
     public RecipeController(RecipeService recipeService) {
         this.recipeService = recipeService;
     }
 
-    // Method to handle GET /recipes/newcomer
+  
     @GetMapping("/newcomer")
     public RecipeDto getNewcomerRecipe() {
         return recipeService.getNewcomerRecipe();
@@ -41,17 +40,29 @@ public class RecipeController {
        return recipeService.getRecipeById(Long.parseLong(id));
    }
 
-    // @GetMapping
-    // public List<Recipe> getAllRecipes() {
-    //     // Logic to fetch all recipes
-    //     return Arrays.asList(); // Placeholder
-    // }
+     @GetMapping
+     public List<RecipeDto> getAllRecipes() {
+         return recipeService.getAllRecipes();
+         
+        }
 
     @PostMapping
     public RecipeDto createRecipe(@RequestBody RecipeDto recipeDto) {
-        // Logic to create a new recipe
+        
            System.out.println("---- DEBUG: Received Recipe Name: '" + recipeDto.getName() + "' ----");
 
         return recipeService.createRecipe(recipeDto);
+    }
+
+    @PatchMapping("/{id}")
+    public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
+        
+        return recipeService.updateRecipe(id, recipeDto);
+    }
+
+    @DeleteMapping("/{id}") 
+    public void deleteRecipe(@PathVariable Long id) {
+        
+        recipeService.deleteRecipe(id);
     }
 }
