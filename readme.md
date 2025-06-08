@@ -32,6 +32,16 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
    - Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html#/)
    - H2 Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
 
+## Authentication
+
+Protected endpoints on this API require a Bearer Token to be sent in the `Authorization` header.
+
+**Header Format:**
+`Authorization: Bearer <your_token>`
+
+For development and testing purposes, the following hardcoded token can be used:
+`my-super-secret-jwt-token-for-testing`
+
 ## API Endpoints
 
 | HTTP Method | Endpoint                | Description                        | Request Body      | Response         |
@@ -39,7 +49,7 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
 | GET         | `/recipes/newcomer`     | Get the first (newcomer) recipe    | -                 | `RecipeDto`      |
 | GET         | `/recipes/{id}`         | Get a recipe by ID                 | -                 | `RecipeDto`      |
 | GET         | `/recipes`              | Get all recipes                    | -                 | `List<RecipeDto>`|
-| POST        | `/recipes`              | Create a new recipe                | `RecipeDto`       | `RecipeDto`      |
+| POST  🔒    | `/recipes`        | Create a new recipe (Authentication Required) | `RecipeDto`         | `RecipeDto`      |
 | PATCH         | `/recipes/{id}`         |Partially update a recipe. Only include the fields you want to change. | `Partial<RecipeDto>`       | `RecipeDto`      |
 | DELETE      | `/recipes/{id}`         | Delete a recipe by ID              | -                 | -                |
 
