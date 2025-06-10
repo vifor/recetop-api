@@ -27,3 +27,27 @@ Scenario: Attempt to create a recipe without an auth token
   When method POST
   # Assert that the request is forbidden
   Then status 403
+
+Scenario: Create a recipe successfully with a valid auth token
+  # GIVEN: The setup for the request
+  Given path '/recipes'
+  And header Authorization = 'Bearer my-super-secret-jwt-token-for-testing'
+  And request
+  """
+  {
+    "name": "Authenticated Test Recipe",
+    "categories": ["Authenticated Test"],
+    "ingredients": ["1 cup of auth"],
+    "steps": ["Provide token", "Get 201 response"],
+    "prepTime": "1 min",
+    "cookTime": "1 min"
+  }
+  """
+
+  # WHEN: The action is performed
+  When method POST
+
+  # THEN: The results are validated
+  Then status 201
+  And match response.id == '#string'
+  And match response.name == 'Authenticated Test Recipe'
