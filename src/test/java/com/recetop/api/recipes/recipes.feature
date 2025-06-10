@@ -2,6 +2,7 @@ Feature: Tests for the Recipe API endpoints
 
 Background:
   * url 'http://localhost:8080'
+  * def authToken = 'Bearer my-super-secret-jwt-token-for-testing'
 
 Scenario: Get all recipes and verify the response
   Given path '/recipes'
@@ -10,44 +11,53 @@ Scenario: Get all recipes and verify the response
   And match response == '#array'
 
 Scenario: Attempt to create a recipe without an auth token
-  # Define the request body for the new recipe
   Given path '/recipes'
-  And request
-  """
-  {
-    "name": "Test Recipe from Karate",
-    "categories": ["Test"],
-    "ingredients": ["1 cup of testing"],
-    "steps": ["Write a test", "Run the test", "See it pass"],
-    "prepTime": "5 mins",
-    "cookTime": "1 min"
-  }
-  """
-  # Make the POST request
+  And request { name: 'Unauthorized Recipe' }
   When method POST
-  # Assert that the request is forbidden
   Then status 403
 
 Scenario: Create a recipe successfully with a valid auth token
-  # GIVEN: The setup for the request
   Given path '/recipes'
-  And header Authorization = 'Bearer my-super-secret-jwt-token-for-testing'
-  And request
-  """
-  {
-    "name": "Authenticated Test Recipe",
-    "categories": ["Authenticated Test"],
-    "ingredients": ["1 cup of auth"],
-    "steps": ["Provide token", "Get 201 response"],
-    "prepTime": "1 min",
-    "cookTime": "1 min"
-  }
-  """
-
-  # WHEN: The action is performed
+  And header Authorization = authToken
+  And request { name: 'Authenticated Test Recipe' }
   When method POST
-
-  # THEN: The results are validated
   Then status 201
   And match response.id == '#string'
-  And match response.name == 'Authenticated Test Recipe'
+
+Scenario: Create a recipe then partially update it
+  # Step 1: Create a recipe to get a valid ID
+  Given path '/recipes'
+  And header Authorization = authToken
+  And request { name: 'Recipe to be Patched', cookTime: '30 mins' }
+  When method POST
+  Then status 201
+  # Extract the ID from the response
+  And def recipeId = response.id
+
+  # Step 2: Use the ID to patch the recipe
+  Given path '/recipes', recipeId
+  And header Authorization = authToken
+  # Only send the field we want to change
+  And request { cookTime: '45 mins' }
+  When method PATCH
+  # Assert that the update was successful and returns the updated resource
+  Then status 200
+  And match response.cookTime == '45 mins'
+
+Scenario: Create a recipe then delete it
+  # Step 1: Create a recipe to get a valid ID
+  Given path '/recipes'
+  And header Authorization = authToken
+  And request { name: 'Recipe to be Deleted' }
+  When method POST
+  Then status 201
+  # Extract the ID from the response
+  And def recipeId = response.id
+
+  # Step 2: Use the ID to delete the recipe
+  Given path '/recipes', recipeId
+  And header Authorization = authToken
+  When method DELETE
+  # This is the TDD part! This test will FAIL because the API
+  # currently returns 200 OK. It will PASS after the refactor.
+  Then status 204
