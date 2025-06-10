@@ -72,17 +72,21 @@ public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeDto recipeDto) 
     return ResponseEntity.created(location).body(savedRecipe);
 }
 
-    @PatchMapping("/{id}")
-    @SecurityRequirement(name = "bearerAuth")
-    public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
-        
-        return recipeService.updateRecipe(id, recipeDto);
-    }
+  // In RecipeController.java
 
-    @DeleteMapping("/{id}") 
-    @SecurityRequirement(name = "bearerAuth")
-    public void deleteRecipe(@PathVariable Long id) {
-        
-        recipeService.deleteRecipe(id);
-    }
+@PatchMapping("/{id}")
+@SecurityRequirement(name = "bearerAuth")
+public ResponseEntity<RecipeDto> patchRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
+    RecipeDto updatedRecipe = recipeService.updateRecipe(id, recipeDto);
+    return ResponseEntity.ok(updatedRecipe);
+}
+
+ // In RecipeController.java
+
+@DeleteMapping("/{id}")
+@SecurityRequirement(name = "bearerAuth")
+public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
+    recipeService.deleteRecipe(id);
+    return ResponseEntity.noContent().build();
+}
 }
