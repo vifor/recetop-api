@@ -48,12 +48,50 @@ For development and testing purposes, the following hardcoded token can be used:
 |-------------|-------------------------|------------------------------------|-------------------|------------------|
 | GET         | `/recipes/newcomer`     | Get the first (newcomer) recipe    | -                 | `RecipeDto`      |
 | GET         | `/recipes/{id}`         | Get a recipe by ID                 | -                 | `RecipeDto`      |
-| GET         | `/recipes`              | Get all recipes                    | -                 | `List<RecipeDto>`|
+| GET         | `/recipes`              | Get all recipes (with pagination)  | See Pagination    | `Page<RecipeDto>`|
 | POST   🔒    | `/recipes`        | Create a new recipe | `RecipeDto`         | `RecipeDto`      |
 | PATCH  🔒       | `/recipes/{id}`         |Partially update a recipe. Only include the fields you want to change. | `Partial<RecipeDto>`       | `RecipeDto`      |
 | DELETE 🔒      | `/recipes/{id}`         | Delete a recipe by ID              | -                 | -                |
 
 > **Note:** Endpoints may require the correct JSON structure for `RecipeDto`.
+
+### Pagination, Sorting, and Filtering
+
+The endpoint that returns a list of resources, such as `GET /recipes`, supports pagination and sorting through URL query parameters.
+
+**Available Parameters:**
+
+* `page`: The page number you want to retrieve (0-indexed, default is `0`).
+* `size`: The number of items to include per page (default is `20`).
+* `sort`: A comma-separated list of properties to sort by. You can specify the direction by appending `,asc` (ascending, default) or `,desc` (descending).
+
+**Example Usage:**
+
+* **Get the first page with 5 recipes:**
+    `GET /recipes?page=0&size=5`
+* **Get the second page with 10 recipes:**
+    `GET /recipes?page=1&size=10`
+* **Get recipes sorted by name in descending order:**
+    `GET /recipes?sort=name,desc`
+
+**Response Structure:**
+
+The response for a paginated endpoint is a `Page` object, which has the following structure:
+
+```json
+{
+    "content": [ ... ], // The array of recipes for the current page
+    "pageable": { ... },
+    "totalPages": 10,
+    "totalElements": 51,
+    "last": false,
+    "size": 5,
+    "number": 0, // The current page number
+    "sort": { ... },
+    "numberOfElements": 5,
+    "first": true,
+    "empty": false
+}
 
 ## Testing with Postman
 
