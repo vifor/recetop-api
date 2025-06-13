@@ -63,6 +63,29 @@ A Postman collection is included to make testing the API endpoints easy. You can
 2.  In Postman, click the "Import" button.
 3.  Upload the downloaded file. A new collection named "recetop-api" will appear in your collections tab.
 
+## Testing
+
+This project uses the **Karate Framework** for API end-to-end testing. Karate was chosen for its ability to combine API test automation, mocks, and performance testing into a single, unified framework. Its human-readable Gherkin syntax makes tests easy to write and understand without requiring deep Java knowledge for test creation.
+
+### How to Run the Tests
+
+The tests can be executed in two primary ways:
+
+**1. From Your IDE**
+
+The simplest way to run the tests is directly from your IDE (like IntelliJ or VS Code):
+* Make sure the main Spring Boot application is running.
+* Navigate to the test runner file at `src/test/java/com/recetop/api/recipes/RecipesKarateTest.java`.
+* Click the "run" icon next to the class name to execute all Karate tests.
+
+**2. Using Maven**
+
+You can also run the tests from the command line using the Maven wrapper included with the project.
+
+```sh
+# This command will execute all tests, including the Karate tests
+mvn test
+```
 ## Technologies Used
 
 - Spring Boot

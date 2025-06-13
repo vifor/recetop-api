@@ -20,6 +20,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.net.URI;
+
 @RestController
 @RequestMapping("/recipes") // Base path for all recipe-related endpoints
 public class RecipeController {
@@ -51,24 +55,36 @@ public class RecipeController {
         }
 
     @PostMapping
-    @SecurityRequirement(name = "bearerAuth")
-    public RecipeDto createRecipe(@RequestBody RecipeDto recipeDto) {
-        
-      logger.debug("Received request to create recipe with name: '{}'", recipeDto.getName());
-        return recipeService.createRecipe(recipeDto);
-    }
+@SecurityRequirement(name = "bearerAuth")
+public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeDto recipeDto) {
+    
+    // 1. Create the new recipe
+    RecipeDto savedRecipe = recipeService.createRecipe(recipeDto);
 
-    @PatchMapping("/{id}")
-    @SecurityRequirement(name = "bearerAuth")
-    public RecipeDto updateRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
-        
-        return recipeService.updateRecipe(id, recipeDto);
-    }
+    // 2. Build the URI for the newly created resource
+    URI location = ServletUriComponentsBuilder
+            .fromCurrentRequest() // Starts with the current request URI (/recipes)
+            .path("/{id}") // Appends /{id}
+            .buildAndExpand(savedRecipe.getId()) // Replaces {id} with the new recipe's ID
+            .toUri();
 
-    @DeleteMapping("/{id}") 
-    @SecurityRequirement(name = "bearerAuth")
-    public void deleteRecipe(@PathVariable Long id) {
-        
-        recipeService.deleteRecipe(id);
-    }
+    // 3. Return a ResponseEntity with status 201, the location header, and the created recipe in the body
+    return ResponseEntity.created(location).body(savedRecipe);
+}
+
+
+@PatchMapping("/{id}")
+@SecurityRequirement(name = "bearerAuth")
+public ResponseEntity<RecipeDto> patchRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
+    RecipeDto updatedRecipe = recipeService.updateRecipe(id, recipeDto);
+    return ResponseEntity.ok(updatedRecipe);
+}
+
+
+@DeleteMapping("/{id}")
+@SecurityRequirement(name = "bearerAuth")
+public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
+    recipeService.deleteRecipe(id);
+    return ResponseEntity.noContent().build();
+}
 }
