@@ -152,7 +152,7 @@
 				"method": "PATCH",
 				"header": [
 					{
-						"key": "Autorization",
+						"key": "Authorization",
 						"value": "my-super-secret-jwt-token-for-testing",
 						"type": "text"
 					}
