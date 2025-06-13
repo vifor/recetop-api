@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -36,14 +38,14 @@ public RecipeDto getNewcomerRecipe() {
 public Optional<RecipeDto> getRecipeById(Long id) {
     return recipeRepository.findById(id).map(RecipeDto::fromEntity);
 }
-@Transactional(readOnly = true)
-public List<RecipeDto> getAllRecipes() {
-    return recipeRepository.findAll()
-            .stream()
-            .map(RecipeDto::fromEntity)
-            .collect(Collectors.toList());
-}
-
+    @Override // It's good practice to add the @Override annotation
+    @Transactional(readOnly = true)
+    public Page<RecipeDto> getAllRecipes(Pageable pageable) {
+        Page<Recipe> recipePage = recipeRepository.findAll(pageable);
+        
+            return recipePage.map(RecipeDto::fromEntity);
+    }
+    
   @Transactional
 public RecipeDto createRecipe(RecipeDto recipeDto) {
     Recipe recipe = RecipeDto.toEntity(recipeDto); // Use the static method from RecipeDto
