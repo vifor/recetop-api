@@ -72,7 +72,6 @@ public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeDto recipeDto) 
     return ResponseEntity.created(location).body(savedRecipe);
 }
 
-  // In RecipeController.java
 
 @PatchMapping("/{id}")
 @SecurityRequirement(name = "bearerAuth")
