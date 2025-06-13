@@ -26,7 +26,7 @@ import java.net.URI;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
+import org.springframework.data.web.PageableDefault;
 @RestController
 @RequestMapping("/recipes") // Base path for all recipe-related endpoints
 public class RecipeController {
