@@ -80,7 +80,6 @@ public ResponseEntity<RecipeDto> patchRecipe(@PathVariable Long id, @RequestBody
     return ResponseEntity.ok(updatedRecipe);
 }
 
- // In RecipeController.java
 
 @DeleteMapping("/{id}")
 @SecurityRequirement(name = "bearerAuth")
