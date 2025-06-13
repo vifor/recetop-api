@@ -52,7 +52,7 @@ public class RecipeController {
    }
 
      @GetMapping
-     public Page<RecipeDto> getAllRecipes(Pageable pageable) {
+     public Page<RecipeDto> getAllRecipes(@PageableDefault(page = 0, size = 10) Pageable pageable) {
          return recipeService.getAllRecipes(pageable);
          
         }
