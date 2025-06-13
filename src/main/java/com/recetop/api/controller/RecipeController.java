@@ -24,6 +24,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import java.net.URI;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 @RestController
 @RequestMapping("/recipes") // Base path for all recipe-related endpoints
 public class RecipeController {
@@ -49,8 +52,8 @@ public class RecipeController {
    }
 
      @GetMapping
-     public List<RecipeDto> getAllRecipes() {
-         return recipeService.getAllRecipes();
+     public Page<RecipeDto> getAllRecipes(Pageable pageable) {
+         return recipeService.getAllRecipes(pageable);
          
         }
 
