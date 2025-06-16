@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -39,25 +40,45 @@ public class RecipeController {
     }
 
   
-    @GetMapping("/newcomer")
-    public RecipeDto getNewcomerRecipe() {
-        return recipeService.getNewcomerRecipe();
-    }
+@GetMapping("/newcomer")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the newcomer recipe"),
+    @ApiResponse(responseCode = "404", description = "Not Found - No recipes are available"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
+public ResponseEntity<RecipeDto> getNewcomerRecipe() {
+    return recipeService.getNewcomerRecipe()
+        .map(recipeDto -> ResponseEntity.ok(recipeDto)) // If recipe is present, return 200 OK with the recipe
+        .orElseGet(() -> ResponseEntity.notFound().build()); // If not present, return 404 Not Found
+}
 
   
-  @GetMapping("/{id}")
- public Optional<RecipeDto> getRecipeById(@PathVariable String id) {
-    //     
-       return recipeService.getRecipeById(Long.parseLong(id));
-   }
-
+@GetMapping("/{id}")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the recipe"),
+    @ApiResponse(responseCode = "404", description = "Not Found - No recipe found with the specified ID"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
+public Optional<RecipeDto> getRecipeById(@PathVariable Long id) { // Changed String to Long
+    return recipeService.getRecipeById(id);
+}
      @GetMapping
+     @ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of recipes"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
      public Page<RecipeDto> getAllRecipes(@PageableDefault(page = 0, size = 10) Pageable pageable) {
          return recipeService.getAllRecipes(pageable);
          
         }
 
     @PostMapping
+ @ApiResponses(value = {
+    @ApiResponse(responseCode = "201", description = "Successfully created the recipe"),
+    @ApiResponse(responseCode = "400", description = "Bad Request - The request body is invalid or missing required fields"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - A valid authentication token is required"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
 @SecurityRequirement(name = "bearerAuth")
 public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeDto recipeDto) {
     
@@ -77,6 +98,13 @@ public ResponseEntity<RecipeDto> createRecipe(@RequestBody RecipeDto recipeDto) 
 
 
 @PatchMapping("/{id}")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully updated the recipe"),
+    @ApiResponse(responseCode = "400", description = "Bad Request - The request body is invalid"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - A valid authentication token is required"),
+    @ApiResponse(responseCode = "404", description = "Not Found - No recipe found with the specified ID"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
 @SecurityRequirement(name = "bearerAuth")
 public ResponseEntity<RecipeDto> patchRecipe(@PathVariable Long id, @RequestBody RecipeDto recipeDto) {
     RecipeDto updatedRecipe = recipeService.updateRecipe(id, recipeDto);
@@ -85,6 +113,12 @@ public ResponseEntity<RecipeDto> patchRecipe(@PathVariable Long id, @RequestBody
 
 
 @DeleteMapping("/{id}")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "204", description = "Successfully deleted the recipe"),
+    @ApiResponse(responseCode = "403", description = "Forbidden - A valid authentication token is required"),
+    @ApiResponse(responseCode = "404", description = "Not Found - No recipe found with the specified ID"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
 @SecurityRequirement(name = "bearerAuth")
 public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
     recipeService.deleteRecipe(id);
