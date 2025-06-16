@@ -11,27 +11,59 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
 
 ## Requirements
 
-- Java 17+
-- Maven
+The requirements for running this project depend on the method you choose.
 
+* **To run locally using Maven:**
+    * Java 17+
+    * Maven
+* **To run using Docker:**
+    * Docker Desktop installed and running
 ## Getting Started
 
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/vifor/recetop-api.git
-   cd recetop-api
-   ```
+You can run this application in two ways: directly using Maven, or by running it as a Docker container (recommended).
 
-2. **Build and run the application:**
-   ```sh
-   mvn spring-boot:run
-   ```
+### Option 1: Running with Maven
 
-3. **Access the API:**
-   - API root: [http://localhost:8080/recipes](http://localhost:8080/recipes)
-   - Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html#/)
-   - H2 Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+1.  **Clone the repository:**
+    ```sh
+    git clone [https://github.com/vifor/recetop-api.git](https://github.com/vifor/recetop-api.git)
+    cd recetop-api
+    ```
 
+2.  **Build and run the application:**
+    ```sh
+    mvn spring-boot:run
+    ```
+
+### Option 2: Running with Docker (Recommended)
+
+This is the recommended way to run the application as it is packaged in a self-contained environment.
+
+**Prerequisites:**
+* Docker Desktop must be installed and running on your machine.
+
+**Steps:**
+
+1.  **Build the Docker Image:**
+    From the root directory of the project, run the following command to build the image:
+    ```sh
+    docker build -t vifor/recetop-api .
+    ```
+
+2.  **Run the Docker Container:**
+    Once the image is built, run the following command to start the application inside a container:
+    ```sh
+    docker run -p 8080:8080 vifor/recetop-api
+    ```
+
+---
+### Access the API
+
+Once the application is running (either via Maven or Docker), you can access it at the following locations:
+
+* **API root:** `http://localhost:8080/recipes`
+* **Swagger UI:** `http://localhost:8080/swagger-ui/index.html`
+* **H2 Console:** `http://localhost:8080/h2-console`
 ## Authentication
 
 Protected endpoints on this API require a Bearer Token to be sent in the `Authorization` header.
