@@ -25,7 +25,7 @@ WORKDIR /app
 
 # Copy ONLY the .jar file from the 'build' stage into the final image
 # This creates a much smaller and more secure final image
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/app.jar app.jar
 
 # Expose the port that the application runs on
 EXPOSE 8080
