@@ -151,6 +151,19 @@ The security is implemented using the following core Spring and project componen
 * **`SecurityConfig.java`:** The central configuration class where the Spring Security filter chain is defined. It disables CSRF, sets the session management policy to `STATELESS`, and defines which endpoints are protected.
 * **`JwtAuthenticationFilter.java`:** A custom filter that runs on every request. It is responsible for inspecting the `Authorization` header, validating the JWT, and setting the user's authentication context within Spring Security.
 * **`springdoc-openapi` Annotations:** The `@SecurityScheme` and `@SecurityRequirement` annotations are used in the main application class (`ApiApplication.java`) and controllers (`RecipeController.java`) to accurately document the security requirements in the Swagger UI.
+### Caching Strategy
+
+This project leverages Spring Boot's caching abstraction (`spring-boot-starter-cache`) and the JCache (JSR-107) standard API.
+
+**Provider:**
+* The chosen JCache implementation is **Ehcache 3**, a robust and widely used in-memory caching library.
+
+**Configuration:**
+* The cache is configured in the `src/main/resources/ehcache.xml` file.
+* To align with the rate limiter's 1-minute refill window, the cache that stores the rate-limiting buckets has an entry expiry of **1 minute**. This ensures that stale rate-limiting data is promptly evicted.
+
+**Current Usage:**
+* **Rate Limiting:** The primary consumer of the cache is the **Bucket4j** feature. It uses the configured `jcache` to store the token buckets for each user, keeping track of their request counts over time to enforce the defined limits.
 
 ## License
 

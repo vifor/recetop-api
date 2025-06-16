@@ -8,5 +8,11 @@ class RecipesKarateTest {
     Karate testRecipes() {
         return Karate.run("recipes").relativeTo(getClass());
     }
+    // In RecipesKarateTest.java
+
+@Karate.Test
+Karate testRateLimit() {
+    return Karate.run("ratelimit").relativeTo(getClass());
+}
 
 }
