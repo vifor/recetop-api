@@ -68,12 +68,18 @@ public Optional<RecipeDto> getRecipeById(@PathVariable Long id) { // Changed Str
     @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
 })
 public ResponseEntity<RecipeDto> getNewcomerRecipe() {
-    // The recipeService.getNewcomerRecipe() returns a RecipeDto, so wrap it in Optional.ofNullable
-    Optional<RecipeDto> optionalRecipe = Optional.ofNullable(recipeService.getNewcomerRecipe());
-    return optionalRecipe
-        .map(recipeDto -> ResponseEntity.ok(recipeDto)) // If a recipe is present, wrap it in a 200 OK response.
-        .orElse(ResponseEntity.notFound().build());      // If the Optional is empty, build a 404 Not Found response.
+    Optional<RecipeDto> newcomerOptional = recipeService.getNewcomerRecipe();
+
+    if (newcomerOptional.isPresent()) {
+        // If a recipe was found, return it with a 200 OK status
+        return ResponseEntity.ok(newcomerOptional.get());
+    } else {
+        // If no recipe was found, return a 404 Not Found status
+        return ResponseEntity.notFound().build();
+    }
 }
+
+
 
 
 
