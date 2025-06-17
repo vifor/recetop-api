@@ -1,17 +1,17 @@
+// Correct content for RecipeServiceImpl.java
 package com.recetop.api.service;
 
+import com.recetop.api.dto.RecipeDto;
 import com.recetop.api.model.Recipe;
 import com.recetop.api.repository.RecipeRepository;
-import com.recetop.api.dto.RecipeDto; // Import the DTO
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
@@ -24,71 +24,53 @@ public class RecipeServiceImpl implements RecipeService {
     }
 
     @Override
-@Transactional(readOnly = true)
-public RecipeDto getNewcomerRecipe() {
-    List<Recipe> allRecipes = recipeRepository.findAll();
-    if (!allRecipes.isEmpty()) {
-        // Simply replace the call to the private method
-        return RecipeDto.fromEntity(allRecipes.get(0));
+    @Transactional(readOnly = true)
+    public Optional<RecipeDto> getNewcomerRecipe() {
+        // This is a more efficient implementation we discussed
+        return recipeRepository.findTopByOrderByIdAsc().map(RecipeDto::fromEntity);
     }
-    return null;
-}
 
-  @Transactional(readOnly = true)
-public Optional<RecipeDto> getRecipeById(Long id) {
-    return recipeRepository.findById(id).map(RecipeDto::fromEntity);
-}
-    @Override // It's good practice to add the @Override annotation
+    @Override
+    @Transactional(readOnly = true)
+    public Optional<RecipeDto> getRecipeById(Long id) {
+        return recipeRepository.findById(id).map(RecipeDto::fromEntity);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Page<RecipeDto> getAllRecipes(Pageable pageable) {
         Page<Recipe> recipePage = recipeRepository.findAll(pageable);
-        
-            return recipePage.map(RecipeDto::fromEntity);
-    }
-    
-  @Transactional
-public RecipeDto createRecipe(RecipeDto recipeDto) {
-    Recipe recipe = RecipeDto.toEntity(recipeDto); // Use the static method from RecipeDto
-    Recipe saved = recipeRepository.save(recipe);
-    return RecipeDto.fromEntity(saved); // Use the static method from RecipeDto
-}
-
-@Transactional
-public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
-    // Find the existing recipe from the database
-    Recipe recipeToUpdate = recipeRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
-
-    // Check each field from the DTO. If it's not null, update the entity.
-    if (recipeDto.getName() != null) {
-        recipeToUpdate.setName(recipeDto.getName());
-    }
-    if (recipeDto.getImage() != null) {
-        recipeToUpdate.setImage(recipeDto.getImage());
-    }
-    if (recipeDto.getPrepTime() != null) {
-        recipeToUpdate.setPrepTime(recipeDto.getPrepTime());
-    }
-    if (recipeDto.getCookTime() != null) {
-        recipeToUpdate.setCookTime(recipeDto.getCookTime());
-    }
-    if (recipeDto.getIngredients() != null && !recipeDto.getIngredients().isEmpty()) {
-        recipeToUpdate.setIngredients(recipeDto.getIngredients());
-    }
-    if (recipeDto.getCategories() != null && !recipeDto.getCategories().isEmpty()) {
-        recipeToUpdate.setCategories(recipeDto.getCategories());
-    }
-    if (recipeDto.getSteps() != null && !recipeDto.getSteps().isEmpty()) {
-        recipeToUpdate.setSteps(recipeDto.getSteps());
+        return recipePage.map(RecipeDto::fromEntity);
     }
 
-    // Save the updated entity
-    Recipe updatedRecipe = recipeRepository.save(recipeToUpdate);
+    @Override
+    @Transactional
+    public RecipeDto createRecipe(RecipeDto recipeDto) {
+        Recipe recipe = RecipeDto.toEntity(recipeDto);
+        Recipe saved = recipeRepository.save(recipe);
+        return RecipeDto.fromEntity(saved);
+    }
 
-    // Return the DTO of the newly updated entity
-    return RecipeDto.fromEntity(updatedRecipe);
-}
+    @Override
+    @Transactional
+    public RecipeDto updateRecipe(Long id, RecipeDto recipeDto) {
+        Recipe recipeToUpdate = recipeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
 
+        // This is the robust PATCH logic we discussed
+        if (recipeDto.getName() != null) { recipeToUpdate.setName(recipeDto.getName()); }
+        if (recipeDto.getImage() != null) { recipeToUpdate.setImage(recipeDto.getImage()); }
+        if (recipeDto.getPrepTime() != null) { recipeToUpdate.setPrepTime(recipeDto.getPrepTime()); }
+        if (recipeDto.getCookTime() != null) { recipeToUpdate.setCookTime(recipeDto.getCookTime()); }
+        if (recipeDto.getIngredients() != null) { recipeToUpdate.setIngredients(recipeDto.getIngredients()); }
+        if (recipeDto.getCategories() != null) { recipeToUpdate.setCategories(recipeDto.getCategories()); }
+        if (recipeDto.getSteps() != null) { recipeToUpdate.setSteps(recipeDto.getSteps()); }
+
+        Recipe updatedRecipe = recipeRepository.save(recipeToUpdate);
+        return RecipeDto.fromEntity(updatedRecipe);
+    }
+
+    @Override
     @Transactional
     public void deleteRecipe(Long id) {
         if (!recipeRepository.existsById(id)) {

@@ -9,6 +9,7 @@ import java.util.Optional;
 @Repository // Optional for interfaces extending JpaRepository, but good practice
 public interface RecipeRepository extends JpaRepository<Recipe, Long> { // Recipe is the entity, Long is the type of its ID
 
+    Optional<Recipe> findTopByOrderByIdAsc();
     // Spring Data JPA will automatically provide implementations for common methods like:
     // save(), findById(), findAll(), deleteById(), etc.
 
