@@ -69,14 +69,7 @@ public Optional<RecipeDto> getRecipeById(@PathVariable Long id) { // Changed Str
 })
 public ResponseEntity<RecipeDto> getNewcomerRecipe() {
     Optional<RecipeDto> newcomerOptional = recipeService.getNewcomerRecipe();
-
-    if (newcomerOptional.isPresent()) {
-        // If a recipe was found, return it with a 200 OK status
-        return ResponseEntity.ok(newcomerOptional.get());
-    } else {
-        // If no recipe was found, return a 404 Not Found status
-        return ResponseEntity.notFound().build();
-    }
+    return ResponseEntity.of(newcomerOptional);
 }
 
 
