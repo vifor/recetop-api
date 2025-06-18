@@ -39,18 +39,7 @@ public class RecipeController {
         this.recipeService = recipeService;
     }
 
-  
-@GetMapping("/newcomer")
-@ApiResponses(value = {
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the newcomer recipe"),
-    @ApiResponse(responseCode = "404", description = "Not Found - No recipes are available"),
-    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
-})
-public ResponseEntity<RecipeDto> getNewcomerRecipe() {
-    return recipeService.getNewcomerRecipe()
-        .map(recipeDto -> ResponseEntity.ok(recipeDto)) // If recipe is present, return 200 OK with the recipe
-        .orElseGet(() -> ResponseEntity.notFound().build()); // If not present, return 404 Not Found
-}
+
 
   
 @GetMapping("/{id}")
@@ -71,6 +60,21 @@ public Optional<RecipeDto> getRecipeById(@PathVariable Long id) { // Changed Str
          return recipeService.getAllRecipes(pageable);
          
         }
+
+@GetMapping("/newcomer")
+@ApiResponses(value = {
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the newcomer recipe"),
+    @ApiResponse(responseCode = "404", description = "Not Found - No recipes are available"),
+    @ApiResponse(responseCode = "429", description = "Too Many Requests - Rate limit exceeded")
+})
+public ResponseEntity<RecipeDto> getNewcomerRecipe() {
+    Optional<RecipeDto> newcomerOptional = recipeService.getNewcomerRecipe();
+    return ResponseEntity.of(newcomerOptional);
+}
+
+
+
+
 
     @PostMapping
  @ApiResponses(value = {

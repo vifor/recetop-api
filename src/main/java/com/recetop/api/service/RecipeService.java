@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface RecipeService {
-  RecipeDto getNewcomerRecipe();
+ Optional<RecipeDto> getNewcomerRecipe();
     Optional<RecipeDto> getRecipeById(Long id);
     Page<RecipeDto> getAllRecipes(Pageable pageable); 
     RecipeDto createRecipe(RecipeDto recipeDto); 

@@ -1,28 +1,19 @@
-Feature: API Rate Limiting
+Feature: Rate Limit Testing
 
 Background:
   * url 'http://localhost:8080'
+  * path '/testing/reset-rate-limiter'
+  * method post
+  * status 204
 
-Scenario: Verify requests are blocked after exceeding the rate limit
+Scenario: Exceeding the rate limit returns a 429 error
+  # Given the API endpoint for recipes
+  * url 'http://localhost:8080'
+  * path '/recipes'
 
-  # Define a JavaScript function that calls our other feature file 10 times
-  * def make_10_requests =
-    """
-    function() {
-      for (var i = 0; i < 10; i++) {
-        karate.log('Making successful request #', i + 1);
-        var result = karate.call('classpath:com/recetop/api/recipes/get-all-recipes.feature');
-        // We can even add an assertion here to make sure the first 10 calls succeed
-        if (result.responseStatus !== 200) {
-          karate.fail('Request number ' + (i + 1) + ' failed unexpectedly');
-        }
-      }
-    }
-    """
-  # Execute the function to consume all the tokens
-  * call make_10_requests
+  # When I make 10 successful calls
+  * karate.repeat(10, function(){ karate.call('classpath:com/recetop/api/recipes/callable-get.feature') })
 
-  # Now, make the 11th request. This one should be blocked.
-  Given path '/recipes'
-  When method GET
-  Then status 429
+  # Then the 11th call should be blocked
+  * method get
+  * status 429

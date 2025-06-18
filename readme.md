@@ -11,27 +11,59 @@ A Spring Boot REST API for managing recipes, built with Java 17, Spring Data JPA
 
 ## Requirements
 
-- Java 17+
-- Maven
+The requirements for running this project depend on the method you choose.
 
+* **To run locally using Maven:**
+    * Java 17+
+    * Maven
+* **To run using Docker:**
+    * Docker Desktop installed and running
 ## Getting Started
 
-1. **Clone the repository:**
-   ```sh
-   git clone https://github.com/vifor/recetop-api.git
-   cd recetop-api
-   ```
+You can run this application in two ways: directly using Maven, or by running it as a Docker container (recommended).
 
-2. **Build and run the application:**
-   ```sh
-   mvn spring-boot:run
-   ```
+### Option 1: Running with Maven
 
-3. **Access the API:**
-   - API root: [http://localhost:8080/recipes](http://localhost:8080/recipes)
-   - Swagger UI: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html#/)
-   - H2 Console: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+1.  **Clone the repository:**
+    ```sh
+    git clone [https://github.com/vifor/recetop-api.git](https://github.com/vifor/recetop-api.git)
+    cd recetop-api
+    ```
 
+2.  **Build and run the application:**
+    ```sh
+    mvn spring-boot:run
+    ```
+
+### Option 2: Running with Docker (Recommended)
+
+This is the recommended way to run the application as it is packaged in a self-contained environment.
+
+**Prerequisites:**
+* Docker Desktop must be installed and running on your machine.
+
+**Steps:**
+
+1.  **Build the Docker Image:**
+    From the root directory of the project, run the following command to build the image:
+    ```sh
+    docker build -t vifor/recetop-api .
+    ```
+
+2.  **Run the Docker Container:**
+    Once the image is built, run the following command to start the application inside a container:
+    ```sh
+    docker run -p 8080:8080 vifor/recetop-api
+    ```
+
+---
+### Access the API
+
+Once the application is running (either via Maven or Docker), you can access it at the following locations:
+
+* **API root:** `http://localhost:8080/recipes`
+* **Swagger UI:** `http://localhost:8080/swagger-ui/index.html`
+* **H2 Console:** `http://localhost:8080/h2-console`
 ## Authentication
 
 Protected endpoints on this API require a Bearer Token to be sent in the `Authorization` header.
@@ -92,7 +124,7 @@ The response for a paginated endpoint is a `Page` object, which has the followin
     "first": true,
     "empty": false
 }
-
+```
 ## Testing with Postman
 
 A Postman collection is included to make testing the API endpoints easy. You can import the collection to your Postman client to get started right away.
@@ -143,6 +175,8 @@ A stateless authentication mechanism using JSON Web Tokens (JWT) was chosen over
 * **Decoupling:** The token is self-contained. This makes it ideal for modern, decoupled architectures where multiple clients (e.g., a web frontend, a mobile app) might consume the API.
 * **Industry Standard:** JWT Bearer authentication is the de-facto standard for securing modern RESTful APIs.
 
+
+
 ### Key Implementation Components
 
 The security is implemented using the following core Spring and project components:
@@ -161,6 +195,16 @@ This project leverages Spring Boot's caching abstraction (`spring-boot-starter-c
 **Configuration:**
 * The cache is configured in the `src/main/resources/ehcache.xml` file.
 * To align with the rate limiter's 1-minute refill window, the cache that stores the rate-limiting buckets has an entry expiry of **1 minute**. This ensures that stale rate-limiting data is promptly evicted.
+
+Testability and State Management
+To ensure test reliability, this project addresses the challenge of stateful components like the rate limiter. Flaky tests can occur when the outcome of one test is affected by the state left behind by a previous one (e.g., a partially used rate-limit bucket).
+
+To solve this, the application includes a programmatic reset mechanism available only during testing.
+
+A special TestingController is activated using the @Profile("test") annotation.
+This controller exposes a POST /testing/reset-rate-limiter endpoint.
+Karate tests that require a clean slate (like ratelimit.feature) call this endpoint in their Background section, guaranteeing an isolated and predictable test run every time.
+This approach avoids using sleep or other brittle workarounds and is a deliberate architectural decision to ensure a fast, robust, and reliable test suite.
 
 **Current Usage:**
 * **Rate Limiting:** The primary consumer of the cache is the **Bucket4j** feature. It uses the configured `jcache` to store the token buckets for each user, keeping track of their request counts over time to enforce the defined limits.
