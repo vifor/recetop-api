@@ -175,6 +175,8 @@ A stateless authentication mechanism using JSON Web Tokens (JWT) was chosen over
 * **Decoupling:** The token is self-contained. This makes it ideal for modern, decoupled architectures where multiple clients (e.g., a web frontend, a mobile app) might consume the API.
 * **Industry Standard:** JWT Bearer authentication is the de-facto standard for securing modern RESTful APIs.
 
+
+
 ### Key Implementation Components
 
 The security is implemented using the following core Spring and project components:
@@ -193,6 +195,16 @@ This project leverages Spring Boot's caching abstraction (`spring-boot-starter-c
 **Configuration:**
 * The cache is configured in the `src/main/resources/ehcache.xml` file.
 * To align with the rate limiter's 1-minute refill window, the cache that stores the rate-limiting buckets has an entry expiry of **1 minute**. This ensures that stale rate-limiting data is promptly evicted.
+
+Testability and State Management
+To ensure test reliability, this project addresses the challenge of stateful components like the rate limiter. Flaky tests can occur when the outcome of one test is affected by the state left behind by a previous one (e.g., a partially used rate-limit bucket).
+
+To solve this, the application includes a programmatic reset mechanism available only during testing.
+
+A special TestingController is activated using the @Profile("test") annotation.
+This controller exposes a POST /testing/reset-rate-limiter endpoint.
+Karate tests that require a clean slate (like ratelimit.feature) call this endpoint in their Background section, guaranteeing an isolated and predictable test run every time.
+This approach avoids using sleep or other brittle workarounds and is a deliberate architectural decision to ensure a fast, robust, and reliable test suite.
 
 **Current Usage:**
 * **Rate Limiting:** The primary consumer of the cache is the **Bucket4j** feature. It uses the configured `jcache` to store the token buckets for each user, keeping track of their request counts over time to enforce the defined limits.
