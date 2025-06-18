@@ -124,7 +124,7 @@ The response for a paginated endpoint is a `Page` object, which has the followin
     "first": true,
     "empty": false
 }
-
+```
 ## Testing with Postman
 
 A Postman collection is included to make testing the API endpoints easy. You can import the collection to your Postman client to get started right away.
