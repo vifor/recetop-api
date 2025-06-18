@@ -1,7 +1,9 @@
 package com.recetop.api.recipes;
 
 import com.intuit.karate.junit5.Karate;
+import org.springframework.test.context.ActiveProfiles; // Import this
 
+@ActiveProfiles("test") 
 class RecipesKarateTest {
 
     @Karate.Test
